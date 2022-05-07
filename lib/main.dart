@@ -155,6 +155,21 @@ class _MySearchTest extends State<MySearchTest> {
   // todo: implement the page here
   
   //the list of menu items : dummy list of database stub
+  String _content = '';
+  final myController = TextEditingController();
+
+  @override
+  void initState() {
+    //start listening to the changes
+    super.initState();
+    myController.addListener(_handleChanges);
+  }
+
+  void _handleChanges () {
+    setState(() {
+      _content = myController.text;
+    });
+  }
 
   List<Menu> menuItems = [
     Menu(
@@ -224,7 +239,9 @@ class _MySearchTest extends State<MySearchTest> {
                         IconButton(
                             onPressed: () {
                               //decrease the count by 1
-                              count-=1;
+                              setState(() {
+                                count -=1;
+                              });
                             },
                             icon: Icon(Icons.remove)
                         ),
@@ -232,7 +249,9 @@ class _MySearchTest extends State<MySearchTest> {
                         IconButton(
                             onPressed: () {
                               // increment the count
-                              count+=1;
+                              setState(() {
+                                count+=1;
+                              });
                             }, 
                             icon: Icon(Icons.add)
                         )
@@ -250,6 +269,15 @@ class _MySearchTest extends State<MySearchTest> {
                         )
                       ],
                     ),
+                    TextField(
+                      onChanged: (String value) {
+                        setState(() {
+                          _content = value;
+                          selection.special_instructions = _content;
+                        });
+                      },
+                      autofocus: true,
+                    )
                   ],
                 ),
               );
