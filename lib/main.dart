@@ -3,7 +3,7 @@ import 'package:consumer_delivery/custom_objects/menu.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const SearchTest());
+  runApp(const OrderHistory());
 }
 
 class MyApp extends StatelessWidget {
@@ -157,6 +157,8 @@ class _MySearchTest extends State<MySearchTest> {
   //the list of menu items : dummy list of database stub
   String _content = '';
   final myController = TextEditingController();
+  List<Menu> cart = [] ;
+  int count = 0;
 
   @override
   void initState() {
@@ -169,6 +171,16 @@ class _MySearchTest extends State<MySearchTest> {
     setState(() {
       _content = myController.text;
     });
+  }
+
+  void addToCart(Menu menuObject) {
+    int amountToBeSet = count;
+    menuObject.set_amount(amountToBeSet);
+    cart.add(menuObject);
+  }
+  
+  List<Menu> getCart() {
+    return cart;
   }
 
   List<Menu> menuItems = [
@@ -195,7 +207,7 @@ class _MySearchTest extends State<MySearchTest> {
     ),
   ];
   
-  int count = 0;
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -289,6 +301,285 @@ class _MySearchTest extends State<MySearchTest> {
   }
 }
 
+class Checkout extends StatelessWidget {
+
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        // This is the theme of your application.
+        //
+        // Try running your application with "flutter run". You'll see the
+        // application has a blue toolbar. Then, without quitting the app, try
+        // changing the primarySwatch below to Colors.green and then invoke
+        // "hot reload" (press "r" in the console where you ran "flutter run",
+        // or simply save your changes to "hot reload" in a Flutter IDE).
+        // Notice that the counter didn't reset back to zero; the application
+        // is not restarted.
+        primarySwatch: Colors.blue,
+      ),
+      home: const MyCheckout(),
+    );
+  }
+
+}
+
+class MyCheckout extends StatefulWidget {
+  const MyCheckout({Key? key}) : super(key: key);
+
+  @override
+  _MyCheckoutState createState() => _MyCheckoutState();
+}
+
+class _MyCheckoutState extends State<MyCheckout> {
+
+  List cartList = [
+    Menu(
+      'https://charismaofindia.ca/wp-content/uploads/2020/12/Butter_Chicken_3_FM.jpg',
+      'Some dish',
+      90.00,
+      'Boneless pieces of baked tandoor chicken, blended with exotic spices',
+      'lorem ipsum',
+    ),
+    Menu(
+      'https://charismaofindia.ca/wp-content/uploads/2020/12/Butter_Chicken_3_FM.jpg',
+      'Some dish2',
+      90.00,
+      'Boneless pieces of baked tandoor chicken, blended with exotic spices',
+      'lorem ipsum',
+    ),
+    Menu(
+      'https://charismaofindia.ca/wp-content/uploads/2020/12/Butter_Chicken_3_FM.jpg',
+      'Some dish3',
+      90.00,
+      'Boneless pieces of baked tandoor chicken, blended with exotic spices',
+      'lorem ipsum',
+    ),
+  ];
+  static const snackBar = SnackBar(
+    content: Text('Please note this is a demo you cannot purchase anything here, if you like this app please contact us to acquire ut'),
+  );
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Cart'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              height: MediaQuery.of(context).size.height/2,
+              child: ListView.builder(
+                itemCount: cartList.length,
+                  itemBuilder: (context, index) {
+                    Menu menuItem = cartList[index];
+                    return Card(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: Image.network(menuItem.network_image),
+                          ),
+                          Expanded(child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text('Name: ' + menuItem.name_of_dish.toString()),
+                              Text('Price: \$' + menuItem.price.toString() ),
+                              Text('Quantity: ' + menuItem.amount.toString())
+                            ],
+                          )),
+                          Expanded(child: IconButton(
+                            icon: Icon(Icons.edit),
+                            onPressed: () {
+                              // display dialogue box to enter new amount
+                            },
+                          )),
+                          Expanded(child: IconButton(
+                            icon: Icon(Icons.delete),
+                            onPressed: () {
+                              //delete the list item
+                              setState(() {
+                                cartList.remove(index);
+                              });
+                            },
+                          ))
+                        ],
+                      ),
+                    );
+                  }),
+            ),
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Expanded(child: Text('Base')),
+                    Expanded(child: Text('\$ 30.99')),
+                  ],
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Expanded(child: Text('Taxes')),
+                    Expanded(child: Text('\$ 0.99')),
+                  ],
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: const [
+                    Expanded(child: Text('Delivery fee')),
+                    Expanded(child: Text('\$ 10.99')),
+                  ],
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: const [
+                    Expanded(child: Text('Total')),
+                    Expanded(child: Text('\$ 42.97' , style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),)),
+                  ],
+                ),
+              ],
+            ),
+          ),
+            ElevatedButton(
+                onPressed: () {
+                  // call the snackbar to let user know this is a demo
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                },
+                child: Text('Pay now')
+            )
+          ],
+        ),
+        ),
+      );
+  }
+}
+
+
+
+class OrderHistory extends StatelessWidget {
+  const OrderHistory({Key? key}) : super(key: key);
+
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        // This is the theme of your application.
+        //
+        // Try running your application with "flutter run". You'll see the
+        // application has a blue toolbar. Then, without quitting the app, try
+        // changing the primarySwatch below to Colors.green and then invoke
+        // "hot reload" (press "r" in the console where you ran "flutter run",
+        // or simply save your changes to "hot reload" in a Flutter IDE).
+        // Notice that the counter didn't reset back to zero; the application
+        // is not restarted.
+        primarySwatch: Colors.blue,
+      ),
+      home: const MyOrderHistory(),
+    );
+  }
+}
+
+
+class MyOrderHistory extends StatefulWidget {
+  const MyOrderHistory({Key? key}) : super(key: key);
+
+  @override
+  _MyOrderHistoryState createState() => _MyOrderHistoryState();
+}
+
+class _MyOrderHistoryState extends State<MyOrderHistory> {
+
+  final List<Menu> _list = [
+    Menu(
+      'https://charismaofindia.ca/wp-content/uploads/2020/12/Butter_Chicken_3_FM.jpg',
+      'Some dish',
+      90.00,
+      'Boneless pieces of baked tandoor chicken, blended with exotic spices',
+      'lorem ipsum',
+    ),
+    Menu(
+      'https://charismaofindia.ca/wp-content/uploads/2020/12/Butter_Chicken_3_FM.jpg',
+      'Some dish2',
+      90.00,
+      'Boneless pieces of baked tandoor chicken, blended with exotic spices',
+      'lorem ipsum',
+    ),
+    Menu(
+      'https://charismaofindia.ca/wp-content/uploads/2020/12/Butter_Chicken_3_FM.jpg',
+      'Some dish3',
+      90.00,
+      'Boneless pieces of baked tandoor chicken, blended with exotic spices',
+      'lorem ipsum',
+    ),
+  ];
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Order History'),
+      ),
+      body: Center(
+        child: ListView.builder(
+            itemBuilder: (context,index) {
+              Menu menuObject = _list[index];
+              return Card(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Row(
+                      children: [
+                        const Expanded(child: Text('Name ')),
+                        Expanded(child: Text(menuObject.name_of_dish))
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        const Expanded(child: Text('Quantity ')),
+                        Expanded(child: Text(menuObject.amount.toString()))
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        ElevatedButton(
+                            onPressed: () {
+
+                            },
+                            child: Text('Reorder')
+                        )
+                      ],
+                    )
+                  ],
+                ),
+              );
+            },
+          itemCount: _list.length,
+        ),
+      ),
+    );
+  }
+}
+
+
+
+
 class MySearchDelegate extends SearchDelegate {
   
   //list of search results or data to be searched
@@ -340,4 +631,85 @@ class MySearchDelegate extends SearchDelegate {
     );
   }
   
+}
+
+
+class Stub {
+  List<Menu> menuItems = [
+    Menu(
+      'https://charismaofindia.ca/wp-content/uploads/2020/12/Butter_Chicken_3_FM.jpg',
+      'Some dish',
+      90.00,
+      'Boneless pieces of baked tandoor chicken, blended with exotic spices',
+      'lorem ipsum',
+    ),
+    Menu(
+      'https://charismaofindia.ca/wp-content/uploads/2020/12/Butter_Chicken_3_FM.jpg',
+      'Some dish2',
+      90.00,
+      'Boneless pieces of baked tandoor chicken, blended with exotic spices',
+      'lorem ipsum',
+    ),
+    Menu(
+      'https://charismaofindia.ca/wp-content/uploads/2020/12/Butter_Chicken_3_FM.jpg',
+      'Some dish3',
+      90.00,
+      'Boneless pieces of baked tandoor chicken, blended with exotic spices',
+      'lorem ipsum',
+    ),
+  ];
+}
+
+class CustomBottomNavigationBar extends StatefulWidget {
+  // const CustomBottomNavigationBar({Key? key}) : super(key: key);
+  int selectedIndex = 0;
+  CustomBottomNavigationBar(this.selectedIndex, {Key? key}) : super(key: key);
+
+  @override
+  _CustomBottomNavigationBarState createState() => _CustomBottomNavigationBarState(selectedIndex);
+}
+
+class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
+  int _selectedIndex = 0;
+
+  _CustomBottomNavigationBarState(int selectedIndex,) {
+    _selectedIndex = selectedIndex;
+  }
+
+  // static const List<Widget> _pages = <Widget>[
+  //   Icon(
+  //     Icons.person,
+  //   ),
+  //   Icon(Icons.menu),
+  //   Icon(Icons.shopping_cart)
+  // ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+
+      if (index == 0) {
+        //go to order history
+        // Navigator.push(context, MaterialPageRoute(builder: context));
+      } else if (index == 1) {
+        // go to menu
+      } else {
+        // go to the cart
+      } //end if-else
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BottomNavigationBar(
+      items: const <BottomNavigationBarItem>[
+        BottomNavigationBarItem(
+            icon: Icon(Icons.person), label: 'Order history'),
+        BottomNavigationBarItem(icon: Icon(Icons.menu), label: 'Menu'),
+        BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: 'Cart'),
+      ],
+      currentIndex: _selectedIndex,
+      onTap: _onItemTapped,
+    );
+  }
 }
