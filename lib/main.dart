@@ -1,6 +1,15 @@
+/*
+  TODO: CHECK FOR UPDATED PACKAGE 
+  The plugin `flutter_email_sender` uses a deprecated version of the Android embedding.
+To avoid unexpected runtime failures, or future build failures, try to see if this plugin supports the Android V2 embedding.
+ Otherwise, consider removing it since a future release of Flutter will remove these deprecated APIs
+ */
+
 
 import 'package:consumer_delivery/custom_objects/menu.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 
 const snackBar = SnackBar(
   content: Text('Please note this is a demo you cannot purchase anything here, if you like this app please contact us to acquire ut'),
@@ -147,6 +156,89 @@ class SearchTest extends StatelessWidget {
   }
 }
 
+//------------------------------------------TEMPORARY CLASSES---------------------------------------
+class TemporaryCart {
+  static List<Menu> _cart = [];
+
+  static void addToCart(Menu menu) {
+    _cart.add(menu);
+  }
+
+  static List<Menu> getCart() {
+    return _cart;
+  }
+
+  static void removeFromCart(int index) {
+    _cart.removeAt(index);
+  }
+
+  static int getTotal() {
+    double total = 0;
+    for (int k =0; k< _cart.length; k++) {
+      total += _cart[k].price;
+    }
+    return total.toInt();
+  }
+
+  static int getTaxes(){
+    double total = 0;
+    for (int k =0; k< _cart.length; k++) {
+      total += _cart[k].price;
+    }
+    double result = 0.13 * total;
+    return result.toInt();
+  }
+
+  static int getTotalAmount(int total, int taxes, int delivery){
+    return total + taxes + delivery;
+  }
+}
+class BackendData{
+  //todo: get the data of menu items from the server
+ static List<Menu> getMenuItems() {
+    return <Menu>[
+      Menu(
+        'https://charismaofindia.ca/wp-content/uploads/2020/12/Butter_Chicken_3_FM.jpg',
+        'Some dish',
+        90.00,
+        'Boneless pieces of baked tandoor chicken, blended with exotic spices',
+        'lorem ipsum',
+      ),
+      Menu(
+        'https://charismaofindia.ca/wp-content/uploads/2020/12/Butter_Chicken_3_FM.jpg',
+        'Some dish2',
+        90.00,
+        'Boneless pieces of baked tandoor chicken, blended with exotic spices',
+        'lorem ipsum',
+      ),
+      Menu(
+        'https://charismaofindia.ca/wp-content/uploads/2020/12/Butter_Chicken_3_FM.jpg',
+        'Some dish3',
+        90.00,
+        'Boneless pieces of baked tandoor chicken, blended with exotic spices',
+        'lorem ipsum',
+      ),
+    ];
+  }
+
+  //todo: place the order at the server, this means decrease the stock amount from server and send confirmation email
+}
+class TemporaryOrderHist {
+  static List<Menu> _orderHistory = [];
+
+  static List<Menu> getOrderHistory(){
+    return _orderHistory;
+  }
+
+  static void addToHistory(Menu menu) {
+    _orderHistory.add(menu);
+  }
+
+  static void setNewOrderHistory(List<Menu> value){
+    _orderHistory = value;
+  }
+}
+//--------------------------------------------TEMPORARY CLASSES-----------------------------------------
 class MySearchTest extends StatefulWidget{
   const MySearchTest({Key? key, required this.title}) : super(key: key);
 
@@ -156,8 +248,8 @@ class MySearchTest extends StatefulWidget{
   State<MySearchTest> createState() => _MySearchTest();
 }
 
-class _MySearchTest extends State<MySearchTest> {
-  // todo: implement the page here
+class _MySearchTest extends State<MySearchTest>{
+  // todo: get the menu data from the server - consumer delivery
   
   //the list of menu items : dummy list of database stub
   String _content = '';
@@ -167,29 +259,6 @@ class _MySearchTest extends State<MySearchTest> {
 
   int _selectedIndex = 1;
 
-
-  // static const List<Widget> _pages = <Widget>[
-  //   Icon(
-  //     Icons.person,
-  //   ),
-  //   Icon(Icons.menu),
-  //   Icon(Icons.shopping_cart)
-  // ];
-
-  // void _onItemTapped(int index) {
-  //   setState(() {
-  //     _selectedIndex = index;
-  //
-  //     if (index == 0) {
-  //       //go to order history
-  //       Navigator.push(context, MaterialPageRoute(builder: context));
-  //     } else if (index == 1) {
-  //       // go to menu
-  //     } else {
-  //       // go to the cart
-  //     } //end if-else
-  //   });
-  // }
 
   @override
   void initState() {
@@ -207,36 +276,15 @@ class _MySearchTest extends State<MySearchTest> {
   void addToCart(Menu menuObject) {
     int amountToBeSet = count;
     menuObject.set_amount(amountToBeSet);
-    cart.add(menuObject);
+    TemporaryCart.addToCart(menuObject);
+    // cart.add(menuObject);
   }
   
   List<Menu> getCart() {
-    return cart;
+    return TemporaryCart.getCart();
   }
 
-  List<Menu> menuItems = [
-    Menu(
-        'https://charismaofindia.ca/wp-content/uploads/2020/12/Butter_Chicken_3_FM.jpg',
-        'Some dish',
-        90.00,
-        'Boneless pieces of baked tandoor chicken, blended with exotic spices',
-        'lorem ipsum',
-    ),
-    Menu(
-      'https://charismaofindia.ca/wp-content/uploads/2020/12/Butter_Chicken_3_FM.jpg',
-      'Some dish2',
-      90.00,
-      'Boneless pieces of baked tandoor chicken, blended with exotic spices',
-      'lorem ipsum',
-    ),
-    Menu(
-      'https://charismaofindia.ca/wp-content/uploads/2020/12/Butter_Chicken_3_FM.jpg',
-      'Some dish3',
-      90.00,
-      'Boneless pieces of baked tandoor chicken, blended with exotic spices',
-      'lorem ipsum',
-    ),
-  ];
+  List<Menu> menuItems = BackendData.getMenuItems();
   
 
   @override
@@ -271,6 +319,7 @@ class _MySearchTest extends State<MySearchTest> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Image.network(selection.network_image),
+                    Text(selection.name_of_dish),
                     Text(selection.description),
                     Row(
                       //todo: implement the counter input to find out how many orders of the thing they want
@@ -304,7 +353,7 @@ class _MySearchTest extends State<MySearchTest> {
                       children: [
                         ElevatedButton(
                             onPressed: () {
-
+                              addToCart(menuItems[index]);
                             },
                             child: const Text('add to cart')
                         )
@@ -392,46 +441,63 @@ class MyCheckout extends StatefulWidget {
 
 class _MyCheckoutState extends State<MyCheckout> {
 
-  List cartList = [
-    Menu(
-      'https://charismaofindia.ca/wp-content/uploads/2020/12/Butter_Chicken_3_FM.jpg',
-      'Some dish',
-      90.00,
-      'Boneless pieces of baked tandoor chicken, blended with exotic spices',
-      'lorem ipsum',
-    ),
-    Menu(
-      'https://charismaofindia.ca/wp-content/uploads/2020/12/Butter_Chicken_3_FM.jpg',
-      'Some dish2',
-      90.00,
-      'Boneless pieces of baked tandoor chicken, blended with exotic spices',
-      'lorem ipsum',
-    ),
-    Menu(
-      'https://charismaofindia.ca/wp-content/uploads/2020/12/Butter_Chicken_3_FM.jpg',
-      'Some dish3',
-      90.00,
-      'Boneless pieces of baked tandoor chicken, blended with exotic spices',
-      'lorem ipsum',
-    ),
-  ];
+  List cartList = TemporaryCart.getCart();
 
   int _selectedIndex = 2;
-
-  //
-  // static const List<Widget> _pages = <Widget>[
-  //   Icon(
-  //     Icons.person,
-  //   ),
-  //   Icon(Icons.menu),
-  //   Icon(Icons.shopping_cart)
-  // ];
+  
+  final _recipentController = TextEditingController(
+    text: 'mthandazo99@gmail.com'
+  );
+  
+  final _subjectController = TextEditingController(
+    text: 'Order: 21453'
+  );
+  
+  final _bodyController = TextEditingController(
+    text: 'Order placed at 17:50'
+        'Order: Some dish '
+        'Quantity: 1'
+        'Price: \$ 15.00'
+  );
+  
+  Future<void> send() async {
+    final Email email = Email(
+      body: _bodyController.text,
+      subject: _subjectController.text,
+      recipients: [_recipentController.text],
+      isHTML: false
+    );
+    
+    String platformResponse;
+    
+    try {
+      await FlutterEmailSender.send(email);
+      platformResponse = 'success';
+    }catch (error) {
+      if (kDebugMode) {
+        print(error);
+      }
+      platformResponse = error.toString();
+    }
+    
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(platformResponse))
+    );
+  }
 
   static const snackBar = SnackBar(
     content: Text('Please note this is a demo you cannot purchase anything here, if you like this app please contact us to acquire ut'),
   );
   @override
   Widget build(BuildContext context) {
+    String total = 'v';
+    if (TemporaryCart.getCart() == null ){
+      total = ' ';
+    }else{
+      total = TemporaryCart.getTotal().toString();
+
+    }
     return Scaffold(
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
@@ -447,99 +513,103 @@ class _MyCheckoutState extends State<MyCheckout> {
         ],
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: MediaQuery.of(context).size.height/2,
-              child: ListView.builder(
-                itemCount: cartList.length,
-                  itemBuilder: (context, index) {
-                    Menu menuItem = cartList[index];
-                    return Card(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: Image.network(menuItem.network_image),
-                          ),
-                          Expanded(child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text('Name: ' + menuItem.name_of_dish.toString()),
-                              Text('Price: \$' + menuItem.price.toString() ),
-                              Text('Quantity: ' + menuItem.amount.toString())
-                            ],
-                          )),
-                          Expanded(child: IconButton(
-                            icon: const Icon(Icons.edit),
-                            onPressed: () {
-                              // display dialogue box to enter new amount
-                            },
-                          )),
-                          Expanded(child: IconButton(
-                            icon: const Icon(Icons.delete),
-                            onPressed: () {
-                              //delete the list item
-                              setState(() {
-                                cartList.remove(index);
-                              });
-                            },
-                          ))
-                        ],
-                      ),
-                    );
-                  }),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: MediaQuery.of(context).size.height/2,
+                child: ListView.builder(
+                  itemCount: cartList.length,
+                    itemBuilder: (context, index) {
+                      Menu menuItem = cartList[index];
+                      return Card(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: Image.network(menuItem.network_image),
+                            ),
+                            Expanded(child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text('Name: ' + menuItem.name_of_dish.toString()),
+                                Text('Price: \$' + menuItem.price.toString() ),
+                                Text('Quantity: ' + menuItem.amount.toString())
+                              ],
+                            )),
+                            Expanded(child: IconButton(
+                              icon: const Icon(Icons.edit),
+                              onPressed: () {
+                                // display dialogue box to enter new amount
+                              },
+                            )),
+                            Expanded(child: IconButton(
+                              icon: const Icon(Icons.delete),
+                              onPressed: () {
+                                //delete the list item
+                                setState(() {
+                                  TemporaryCart.removeFromCart(index);
+                                });
+                              },
+                            ))
+                          ],
+                        ),
+                      );
+                    }),
+              ),
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Expanded(child: Text('Base')),
+                      Expanded(child: Text('\$ ' + total)),
+                    ],
+                  ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Expanded(child: Text('Taxes')),
+                      Expanded(child: Text('\$ + ' + TemporaryCart.getTaxes().toString())),
+                    ],
+                  ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: const [
+                      Expanded(child: Text('Delivery fee')),
+                      Expanded(child: Text('\$ 10.99')),
+                    ],
+                  ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Expanded(child: Text('Total')),
+                      Expanded(child: Text('\$ + ' + TemporaryCart.getTotalAmount(TemporaryCart.getTotal(), TemporaryCart.getTaxes(), 10).toString() , style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),)),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Expanded(child: Text('Base')),
-                    Expanded(child: Text('\$ 30.99')),
-                  ],
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Expanded(child: Text('Taxes')),
-                    Expanded(child: Text('\$ 0.99')),
-                  ],
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: const [
-                    Expanded(child: Text('Delivery fee')),
-                    Expanded(child: Text('\$ 10.99')),
-                  ],
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: const [
-                    Expanded(child: Text('Total')),
-                    Expanded(child: Text('\$ 42.97' , style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),)),
-                  ],
-                ),
-              ],
-            ),
+              ElevatedButton(
+                  onPressed: () {
+                    // call the snackbar to let user know this is a demo
+                    TemporaryOrderHist.setNewOrderHistory(TemporaryCart.getCart());
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    send();
+                  },
+                  child: const Text('Pay now')
+              )
+            ],
           ),
-            ElevatedButton(
-                onPressed: () {
-                  // call the snackbar to let user know this is a demo
-                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                },
-                child: const Text('Pay now')
-            )
-          ],
         ),
         ),
       bottomNavigationBar: BottomNavigationBar(
@@ -608,41 +678,11 @@ class MyOrderHistory extends StatefulWidget {
 }
 
 class _MyOrderHistoryState extends State<MyOrderHistory> {
-
-  final List<Menu> _list = [
-    Menu(
-      'https://charismaofindia.ca/wp-content/uploads/2020/12/Butter_Chicken_3_FM.jpg',
-      'Some dish',
-      90.00,
-      'Boneless pieces of baked tandoor chicken, blended with exotic spices',
-      'lorem ipsum',
-    ),
-    Menu(
-      'https://charismaofindia.ca/wp-content/uploads/2020/12/Butter_Chicken_3_FM.jpg',
-      'Some dish2',
-      90.00,
-      'Boneless pieces of baked tandoor chicken, blended with exotic spices',
-      'lorem ipsum',
-    ),
-    Menu(
-      'https://charismaofindia.ca/wp-content/uploads/2020/12/Butter_Chicken_3_FM.jpg',
-      'Some dish3',
-      90.00,
-      'Boneless pieces of baked tandoor chicken, blended with exotic spices',
-      'lorem ipsum',
-    ),
-  ];
+  //todo: save the order history on the device storage, use firebase for login information
+  final List<Menu> _list = TemporaryOrderHist.getOrderHistory();
 
   int _selectedIndex = 0;
 
-  //
-  // static const List<Widget> _pages = <Widget>[
-  //   Icon(
-  //     Icons.person,
-  //   ),
-  //   Icon(Icons.menu),
-  //   Icon(Icons.shopping_cart)
-  // ];
 
   @override
   Widget build(BuildContext context) {
@@ -687,7 +727,7 @@ class _MyOrderHistoryState extends State<MyOrderHistory> {
                       children: [
                         ElevatedButton(
                             onPressed: () {
-
+                              TemporaryCart.addToCart(_list[index]);
                             },
                             child: const Text('Reorder')
                         )
@@ -736,29 +776,7 @@ class _MyOrderHistoryState extends State<MyOrderHistory> {
 class MySearchDelegate extends SearchDelegate {
   
   //list of search results or data to be searched
-  List<Menu> searchResults = [
-    Menu(
-      'https://charismaofindia.ca/wp-content/uploads/2020/12/Butter_Chicken_3_FM.jpg',
-      'Some dish',
-      90.00,
-      'Boneless pieces of baked tandoor chicken, blended with exotic spices',
-      'lorem ipsum',
-    ),
-    Menu(
-      'https://charismaofindia.ca/wp-content/uploads/2020/12/Butter_Chicken_3_FM.jpg',
-      'Some dish2',
-      90.00,
-      'Boneless pieces of baked tandoor chicken, blended with exotic spices',
-      'lorem ipsum',
-    ),
-    Menu(
-      'https://charismaofindia.ca/wp-content/uploads/2020/12/Butter_Chicken_3_FM.jpg',
-      'Some dish3',
-      90.00,
-      'Boneless pieces of baked tandoor chicken, blended with exotic spices',
-      'lorem ipsum',
-    ),
-  ];
+  List<Menu> searchResults = BackendData.getMenuItems();
   int count = 0;
   String _content = "Enter special instructions";
   
@@ -972,82 +990,6 @@ class MySearchDelegate extends SearchDelegate {
 }
 
 
-class Stub {
-  List<Menu> menuItems = [
-    Menu(
-      'https://charismaofindia.ca/wp-content/uploads/2020/12/Butter_Chicken_3_FM.jpg',
-      'Some dish',
-      90.00,
-      'Boneless pieces of baked tandoor chicken, blended with exotic spices',
-      'lorem ipsum',
-    ),
-    Menu(
-      'https://charismaofindia.ca/wp-content/uploads/2020/12/Butter_Chicken_3_FM.jpg',
-      'Some dish2',
-      90.00,
-      'Boneless pieces of baked tandoor chicken, blended with exotic spices',
-      'lorem ipsum',
-    ),
-    Menu(
-      'https://charismaofindia.ca/wp-content/uploads/2020/12/Butter_Chicken_3_FM.jpg',
-      'Some dish3',
-      90.00,
-      'Boneless pieces of baked tandoor chicken, blended with exotic spices',
-      'lorem ipsum',
-    ),
-  ];
-}
 
-// class CustomBottomNavigationBar extends StatefulWidget {
-//   // const CustomBottomNavigationBar({Key? key}) : super(key: key);
-//   int _selectedIndex = 0;
-//   CustomBottomNavigationBar(this._selectedIndex, {Key? key}) : super(key: key);
-//
-//   @override
-//   _CustomBottomNavigationBarState createState() => _CustomBottomNavigationBarState(_selectedIndex);
-// }
 
-// class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
-//   int _selectedIndex = 0;
-//
-//   _CustomBottomNavigationBarState(int selectedIndex,) {
-//     _selectedIndex = selectedIndex;
-//   }
-//
-//   // static const List<Widget> _pages = <Widget>[
-//   //   Icon(
-//   //     Icons.person,
-//   //   ),
-//   //   Icon(Icons.menu),
-//   //   Icon(Icons.shopping_cart)
-//   // ];
-//
-//   void _onItemTapped(int index) {
-//     setState(() {
-//       _selectedIndex = index;
-//
-//       if (index == 0) {
-//         //go to order history
-//         // Navigator.push(context, MaterialPageRoute(builder: context));
-//       } else if (index == 1) {
-//         // go to menu
-//       } else {
-//         // go to the cart
-//       } //end if-else
-//     });
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return BottomNavigationBar(
-//       items: const <BottomNavigationBarItem>[
-//         BottomNavigationBarItem(
-//             icon: Icon(Icons.person), label: 'Order history'),
-//         BottomNavigationBarItem(icon: Icon(Icons.menu), label: 'Menu'),
-//         BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: 'Cart'),
-//       ],
-//       currentIndex: _selectedIndex,
-//       onTap: _onItemTapped,
-//     );
-//   }
-// }
+
