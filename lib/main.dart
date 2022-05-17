@@ -15,124 +15,25 @@ const snackBar = SnackBar(
   content: Text('Please note this is a demo you cannot purchase anything here, if you like this app please contact us to acquire ut'),
 );
 
+const primaryColor = Colors.deepPurple;
+
+const primaryColorCard = Colors.white10;
+
+const String dialogText = '';
+
+const String about = '';
+
+ void launchContact() {
+  //todo: add url launcher function to contact the store
+}
 
 void main() {
-  runApp(const SearchTest());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
-  }
+  runApp(const MenuPage());
 }
 
 // please note that Search test is meant to be named Menu page
-class SearchTest extends StatelessWidget {
-  const SearchTest({Key? key}) : super(key: key);
+class MenuPage extends StatelessWidget {
+  const MenuPage({Key? key}) : super(key: key);
 
   // This widget is the root of your application.
   @override
@@ -255,7 +156,7 @@ class _MySearchTest extends State<MySearchTest>{
   String _content = '';
   final myController = TextEditingController();
   List<Menu> cart = [] ;
-  int count = 0;
+  int count = 1;
 
   int _selectedIndex = 1;
 
@@ -300,6 +201,7 @@ class _MySearchTest extends State<MySearchTest>{
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
+        backgroundColor: primaryColor,
         actions: [
           IconButton(onPressed: () {
             showSearch(
@@ -322,7 +224,6 @@ class _MySearchTest extends State<MySearchTest>{
                     Text(selection.name_of_dish),
                     Text(selection.description),
                     Row(
-                      //todo: implement the counter input to find out how many orders of the thing they want
                       crossAxisAlignment:  CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -353,6 +254,7 @@ class _MySearchTest extends State<MySearchTest>{
                       children: [
                         ElevatedButton(
                             onPressed: () {
+                              menuItems[index].set_amount(count);
                               addToCart(menuItems[index]);
                             },
                             child: const Text('add to cart')
@@ -366,15 +268,55 @@ class _MySearchTest extends State<MySearchTest>{
                           selection.special_instructions = _content;
                         });
                       },
-                      autofocus: true,
+                      autofocus: false,
+                      decoration: const InputDecoration.collapsed(hintText: 'Special instructions'),
                     )
                   ],
                 ),
+                color: primaryColorCard,
               );
             },
           itemCount: menuItems.length,
         )
     ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: const BoxDecoration(color: primaryColor),
+                child: CircleAvatar(child: Icon(Icons.person, size: MediaQuery.of(context).size.width/5,))
+            ),
+            ListTile(
+              title: const Text('Contact help'),
+              onTap: () {
+                //use url launcher to text help line
+                launchContact();
+                Navigator.pop(context,'');
+              },
+            ),
+            ListTile(
+              title: const Text('About'),
+              onTap: () {
+                // go to about page or show about dialog box
+                Navigator.pop(context,'');
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                      title: const Text('Alert dialogue'),
+                      content: const Text(about),
+                      actions: [
+                        TextButton(onPressed: () => Navigator.pop(context, 'Cancel'), child: const Text('Cancel')),
+                        TextButton(onPressed: () => Navigator.pop(context,'OK'),child: const Text('Ok'),)
+                      ],
+                    )
+                );
+
+              },
+            )
+          ],
+        ),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -392,7 +334,7 @@ class _MySearchTest extends State<MySearchTest>{
               Navigator.push(context, MaterialPageRoute(builder: (context) => const OrderHistory()));
             } else if (index == 1) {
               // go to menu
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const SearchTest()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const MenuPage()));
             } else {
               // go to the cart
               Navigator.push(context, MaterialPageRoute(builder: (context) => const Checkout()));
@@ -467,9 +409,9 @@ class _MyCheckoutState extends State<MyCheckout> {
       recipients: [_recipentController.text],
       isHTML: false
     );
-    
+
     String platformResponse;
-    
+
     try {
       await FlutterEmailSender.send(email);
       platformResponse = 'success';
@@ -479,7 +421,7 @@ class _MyCheckoutState extends State<MyCheckout> {
       }
       platformResponse = error.toString();
     }
-    
+
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(platformResponse))
@@ -503,6 +445,7 @@ class _MyCheckoutState extends State<MyCheckout> {
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: const Text('Cart'),
+        backgroundColor: primaryColor,
         actions: [
           IconButton(onPressed: () {
             showSearch(
@@ -526,28 +469,44 @@ class _MyCheckoutState extends State<MyCheckout> {
                       Menu menuItem = cartList[index];
                       return Card(
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            Expanded(
+                            Flexible(
                               child: Image.network(menuItem.network_image),
+                              fit: FlexFit.loose,
                             ),
-                            Expanded(child: Column(
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width/40,
+                            ),
+                            Flexible(
+                                child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Text('Name: ' + menuItem.name_of_dish.toString()),
+                                Text( menuItem.name_of_dish.toString()),
                                 Text('Price: \$' + menuItem.price.toString() ),
                                 Text('Quantity: ' + menuItem.amount.toString())
                               ],
-                            )),
-                            Expanded(child: IconButton(
+                            ),
+                              fit: FlexFit.loose,
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width/10,
+                            ),
+                            Flexible(
+                                child: IconButton(
                               icon: const Icon(Icons.edit),
                               onPressed: () {
                                 // display dialogue box to enter new amount
                               },
-                            )),
-                            Expanded(child: IconButton(
+                            ),
+                              fit: FlexFit.loose,
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width/10,
+                            ),
+                            Flexible(
+                                child: IconButton(
                               icon: const Icon(Icons.delete),
                               onPressed: () {
                                 //delete the list item
@@ -555,45 +514,64 @@ class _MyCheckoutState extends State<MyCheckout> {
                                   TemporaryCart.removeFromCart(index);
                                 });
                               },
-                            ))
+                            ),
+                              fit: FlexFit.loose,
+                            )
                           ],
                         ),
+                        color: primaryColorCard,
                       );
                     }),
               ),
             Center(
-              child: Column(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                  Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Expanded(child: Text('Base')),
-                      Expanded(child: Text('\$ ' + total)),
-                    ],
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Expanded(child: Text('Taxes')),
-                      Expanded(child: Text('\$ + ' + TemporaryCart.getTaxes().toString())),
-                    ],
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: const [
-                      Expanded(child: Text('Delivery fee')),
-                      Expanded(child: Text('\$ 10.99')),
-                    ],
-                  ),
-                  Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const Expanded(child: Text('Total')),
-                      Expanded(child: Text('\$ + ' + TemporaryCart.getTotalAmount(TemporaryCart.getTotal(), TemporaryCart.getTaxes(), 10).toString() , style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),)),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Flexible(
+                              child: Text('Base'),
+                            fit: FlexFit.loose,
+                          ),
+                          Flexible(child: Text('      \$' + total), fit: FlexFit.loose),
+                        ],
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+
+                        children: [
+                          const Flexible(child: Text('Taxes'), fit: FlexFit.loose,),
+                          Flexible(child: Text('      \$' + TemporaryCart.getTaxes().toString()),fit: FlexFit.loose),
+                        ],
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+
+                        children: const [
+                          Flexible(child: Text('Delivery fee'),fit: FlexFit.loose),
+                          Flexible(child: Text('      \$10.99'),fit: FlexFit.loose),
+                        ],
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+
+                        children: [
+                          const Flexible(child: Text('Total'),fit: FlexFit.loose),
+                          Flexible(child: Text('      \$' + TemporaryCart.getTotalAmount(TemporaryCart.getTotal(), TemporaryCart.getTaxes(), 10).toString() , style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),fit: FlexFit.loose),
+                        ],
+                      ),
                     ],
                   ),
                 ],
@@ -604,6 +582,18 @@ class _MyCheckoutState extends State<MyCheckout> {
                     // call the snackbar to let user know this is a demo
                     TemporaryOrderHist.setNewOrderHistory(TemporaryCart.getCart());
                     ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    //show a dialog box that shows a message informing the user of the state
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) => AlertDialog(
+                          title: const Text('Alert dialogue'),
+                          content: const Text('Alert'),
+                          actions: [
+                            TextButton(onPressed: () => Navigator.pop(context, 'Cancel'), child: const Text('Cancel')),
+                            TextButton(onPressed: () => Navigator.pop(context,'OK'),child: const Text('Ok'),)
+                          ],
+                        )
+                    );
                     send();
                   },
                   child: const Text('Pay now')
@@ -612,6 +602,44 @@ class _MyCheckoutState extends State<MyCheckout> {
           ),
         ),
         ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+                decoration: const BoxDecoration(color: primaryColor),
+                child: CircleAvatar(child: Icon(Icons.person, size: MediaQuery.of(context).size.width/5,))
+            ),
+            ListTile(
+              title: const Text('Contact help'),
+              onTap: () {
+                //use url launcher to text help line
+                launchContact();
+                Navigator.pop(context,'');
+              },
+            ),
+            ListTile(
+              title: const Text('About'),
+              onTap: () {
+                // go to about page or show about dialog box
+                Navigator.pop(context,'');
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                      title: const Text('Alert dialogue'),
+                      content: const Text(about),
+                      actions: [
+                        TextButton(onPressed: () => Navigator.pop(context, 'Cancel'), child: const Text('Cancel')),
+                        TextButton(onPressed: () => Navigator.pop(context,'OK'),child: const Text('Ok'),)
+                      ],
+                    )
+                );
+
+              },
+            )
+          ],
+        ),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -629,7 +657,7 @@ class _MyCheckoutState extends State<MyCheckout> {
               Navigator.push(context, MaterialPageRoute(builder: (context) => const OrderHistory()));
             } else if (index == 1) {
               // go to menu
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const SearchTest()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const MenuPage()));
             } else {
               // go to the cart
               Navigator.push(context, MaterialPageRoute(builder: (context) => const Checkout()));
@@ -699,6 +727,7 @@ class _MyOrderHistoryState extends State<MyOrderHistory> {
             );
           }, icon: const Icon(Icons.search))
         ],
+        backgroundColor: primaryColor,
       ),
       body: Center(
         child: ListView.builder(
@@ -735,9 +764,48 @@ class _MyOrderHistoryState extends State<MyOrderHistory> {
                     )
                   ],
                 ),
+                color:primaryColorCard,
               );
             },
           itemCount: _list.length,
+        ),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+                decoration: const BoxDecoration(color: primaryColor),
+                child: CircleAvatar(child: Icon(Icons.person, size: MediaQuery.of(context).size.width/5,))
+            ),
+            ListTile(
+              title: const Text('Contact help'),
+              onTap: () {
+                //use url launcher to text help line
+                launchContact();
+                Navigator.pop(context,'');
+              },
+            ),
+            ListTile(
+              title: const Text('About'),
+              onTap: () {
+                // go to about page or show about dialog box
+                Navigator.pop(context,'');
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                      title: const Text('Alert dialogue'),
+                      content: const Text(about),
+                      actions: [
+                        TextButton(onPressed: () => Navigator.pop(context, 'Cancel'), child: const Text('Cancel')),
+                        TextButton(onPressed: () => Navigator.pop(context,'OK'),child: const Text('Ok'),)
+                      ],
+                    )
+                );
+
+              },
+            )
+          ],
         ),
       ),
       bottomNavigationBar:  BottomNavigationBar(
@@ -757,7 +825,7 @@ class _MyOrderHistoryState extends State<MyOrderHistory> {
               Navigator.push(context, MaterialPageRoute(builder: (context) => const OrderHistory()));
             } else if (index == 1) {
               // go to menu
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const SearchTest()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const MenuPage()));
             } else {
               // go to the cart
               Navigator.push(context, MaterialPageRoute(builder: (context) => const Checkout()));
